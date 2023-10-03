@@ -7,6 +7,6 @@ kafka:
     topic: syslog
 
 elasticsearch:
-#  host: 172.30.0.2
-  host: localhost
+  host: 172.30.0.2
+#  host: localhost
   port: 9200

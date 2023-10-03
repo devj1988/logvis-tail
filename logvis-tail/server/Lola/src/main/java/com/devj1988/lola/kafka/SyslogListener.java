@@ -1,10 +1,9 @@
 package com.devj1988.lola.kafka;
 
-import co.elastic.clients.util.DateTime;
-import com.devj1988.lola.es.ElasticSearchService;
+import com.devj1988.lola.service.ElasticSearchService;
 import com.devj1988.lola.model.SyslogMessage;
+import com.devj1988.lola.service.SSEService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -18,6 +17,7 @@ import java.time.Instant;
 @Component
 public class SyslogListener {
     private final ElasticSearchService elasticSearchService;
+    private final SSEService sseService;
 
     @Value(value = "${kafka.consumer.groupId}")
     private String groupId;
@@ -25,18 +25,21 @@ public class SyslogListener {
     @Value(value = "${kafka.consumer.topic}")
     private String topic;
 
-    public SyslogListener(ElasticSearchService elasticSearchService) {
+    public SyslogListener(ElasticSearchService elasticSearchService,
+                          SSEService sseService) {
         this.elasticSearchService = elasticSearchService;
+        this.sseService = sseService;
     }
 
     @KafkaListener(topics = "syslog", groupId = "lola", containerFactory = "kafkaListenerContainerFactory")
-    public void listenWithHeaders(
+    public void listenForSyslogMessages(
             @Payload String message,
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition) {
         System.out.println("Received Message: " + message + " from partition: " + partition);
         SyslogMessage syslogMessage = parse(message);
 
         elasticSearchService.indexMessage(syslogMessage);
+        sseService.newSysLogMessage(syslogMessage);
     }
 
     private SyslogMessage parse(String message) {

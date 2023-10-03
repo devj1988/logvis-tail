@@ -1,10 +1,11 @@
-package com.devj1988.lola.es;
+package com.devj1988.lola.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.indices.IndicesStatsResponse;
 import com.devj1988.lola.config.ESConfig;
 import com.devj1988.lola.model.SyslogMessage;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -14,13 +15,16 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class ElasticSearchService {
     public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+    public static final String INDEX_PREFIX = "logs-";
 
     private final ElasticsearchClient elasticsearchClient;
 
@@ -35,7 +39,6 @@ public class ElasticSearchService {
                     .index(getIndexForApplication(message.getApplication()))
                     .document(message)
             );
-            log.info("Indexed with version " + response.version());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -65,15 +68,34 @@ public class ElasticSearchService {
         return logs;
     }
 
-    private String getIndexForApplication(String application) {
-        return "logs-" + application;
+    public Set<String> getApplicationList() {
+        IndicesStatsResponse stats = null;
+        try {
+            stats = elasticsearchClient.indices().stats();
+        } catch (IOException e) {
+            return Collections.emptySet();
+        }
+//        stats.all().primaries();
+        return stats.indices().keySet().stream()
+                .filter(x -> x.startsWith(INDEX_PREFIX))
+                .map(x -> x.substring(INDEX_PREFIX.length()))
+                .collect(Collectors.toSet());
     }
 
-    public static void main(String[] args) throws IOException {
+    public boolean applicationExists(String application) {
+        return getApplicationList().contains(application);
+    }
+
+    private String getIndexForApplication(String application) {
+        return INDEX_PREFIX + application;
+    }
+
+    public static void main(String[] args) throws Exception {
         ESConfig config = new ESConfig();
         ElasticsearchClient esclient = config.elasticsearchClient("localhost", 9200);
         ElasticSearchService service = new ElasticSearchService(esclient);
-        service.getLogs("hellosb", "2023-10-03T15:54:05.000+0000",
-                "2023-10-03T15:59:55.000+0000");
+        service.getLogs("hellosb", "2023-10-03T19:53:33.000+0000",
+                "2023-10-03T19:56:33.000+0000");
+        service.getApplicationList();
     }
 }
