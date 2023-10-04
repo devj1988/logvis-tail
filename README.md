@@ -47,9 +47,11 @@ It supports these commands:
 
 To build the sample app hellosb:
 
-`$../hello/gradlew assemble`
+`$cd hello`
 
-`$sudo docker build ../hello -t devj2019/hellosb`
+`$./gradlew assemble`
+
+`$sudo docker build . -t devj2019/hellosb`
 
 Running hellosb with logs forwarded to syslog:
 
@@ -62,9 +64,11 @@ Thus, all logs coming from containers running the same application will end up i
 
 ## TEAR DOWN
 
-`$chmod +x ./deps/teardown.sh`
+`$cd deps`
 
-`$./deps/teardown.sh`
+`$chmod +x ./teardown.sh`
+
+`$./teardown.sh`
 
 This will remove the containers setup in STARTING UP phase.
 That's kafka, syslog, elasticsearch and lola.
