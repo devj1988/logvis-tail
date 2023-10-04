@@ -9,7 +9,7 @@ You will need JDK 17 installed to build LOLA and HelloSB, and Python3 to run log
 
 ## STARTING UP
 
-`cd deps`
+`$cd deps`
 
 `$chmod +x ./init.sh`
 
