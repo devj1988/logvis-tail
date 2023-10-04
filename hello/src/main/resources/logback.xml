@@ -1,0 +1,40 @@
+<configuration>
+
+   <!-- <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+       <encoder>
+           <pattern>%-4relative [%thread] %-5level - %msg%n</pattern>
+        </encoder>
+   </appender> 
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" /> 
+   </root> -->
+
+    <appender name="json" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+            <jsonFormatter
+                    class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+                <prettyPrint>false</prettyPrint>
+            </jsonFormatter>
+            <timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
+            <appendLineSeparator>true</appendLineSeparator>
+        </layout>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="json" />
+    </root>
+
+    <!-- <appender name="syslog" class="ch.qos.logback.classic.net.SyslogAppender">
+        <syslogHost>syslog</syslogHost>
+        <facility>USER</facility>
+        <port>514</port>
+        <throwableExcluded>true</throwableExcluded>
+        <suffixPattern>[%thread] %logger %msg</suffixPattern>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="syslog"/>
+    </root> -->
+
+</configuration>
