@@ -1,5 +1,4 @@
-import requests, argparse, sys
-import sseclient
+import requests, argparse, sys, sseclient
 
 LOLA_LOGS_HOST = "http://localhost:8081"
 LOLA_LOGS_ENDPOINT = "logs"
@@ -18,8 +17,13 @@ def tail_logs(app):
     url = f'{LOLA_LOGS_HOST}/{LOLA_TAIL_ENDPOINT}/{app}'
     response = requests.get(url, stream=True, headers=headers)
     client = sseclient.SSEClient(response)
-    for event in client.events():
-        print(event.data)
+
+    try:
+        for event in client.events():
+            print(event.data)
+    except KeyboardInterrupt:
+        response.close()
+        client.close()
 
 def fetch_and_print_logs(app, start, end):
     start = requests.utils.quote(start)
