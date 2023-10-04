@@ -7,6 +7,8 @@ It aggregates logs from containers, which can be viewed in real-time or after th
 
 You will need JDK 17 installed to build LOLA and HelloSB, and Python3 to run logvis-tail.py
 
+![arch diagram](https://i.ibb.co/XCzQddn/logvis-tail-arch.png)
+
 ## STARTING UP
 
 `$cd deps`
