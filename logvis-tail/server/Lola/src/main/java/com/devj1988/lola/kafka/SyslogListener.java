@@ -56,10 +56,4 @@ public class SyslogListener {
 
         return syslogMessage;
     }
-
-//    public static void main(String[] args) {
-//        SyslogListener listener = new SyslogListener(null);
-//        String message = "2023-10-03T00:33:33+00:00 172.30.0.1 hellosb-aefa7a65f31a[1408]: { \"abc\": 123 }";
-//        listener.parse(message);
-//    }
 }

@@ -4,7 +4,10 @@ import com.devj1988.lola.service.ElasticSearchService;
 import com.devj1988.lola.service.SSEService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -14,8 +17,6 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @RestController
 public class LogsController {
@@ -77,22 +78,6 @@ public class LogsController {
 
     @GetMapping("/tail-logs/{application}")
     public SseEmitter streamSseMvc(@PathVariable String application) {
-//        SseEmitter emitter = new SseEmitter();
-//        ExecutorService sseMvcExecutor = Executors.newSingleThreadExecutor();
-//        sseMvcExecutor.execute(() -> {
-//            try {
-//                for (int i = 0; true; i++) {
-//                    SseEmitter.SseEventBuilder event = SseEmitter.event()
-//                            .data("some data")
-//                            .id(String.valueOf(i))
-//                            .name("sse event - mvc" + String.valueOf(i));
-//                    emitter.send(event);
-//                    Thread.sleep(1000);
-//                }
-//            } catch (Exception ex) {
-//                emitter.completeWithError(ex);
-//            }
-//        });
         return sseService.getEmitterForApplication(application);
     }
 }

@@ -55,11 +55,11 @@ public class SSEService {
         CopyOnWriteArrayList<SseEmitter> list = emittersMap.get(syslogMessage.getApplication());
         if (list != null && !list.isEmpty()) {
             String message = syslogMessage.getSource() + " : " + syslogMessage.getLog();
-            list.forEach(emitter -> sendMessage(emitter, message, list));
+            list.forEach(emitter -> sendMessage(emitter, message));
         }
     }
 
-    private void sendMessage(SseEmitter emitter, String message, CopyOnWriteArrayList<SseEmitter> list) {
+    private void sendMessage(SseEmitter emitter, String message) {
         sseMvcExecutor.execute(() -> {
             try {
                 SseEmitter.SseEventBuilder event = SseEmitter.event()
