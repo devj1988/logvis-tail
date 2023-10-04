@@ -1,5 +1,5 @@
 import requests, argparse, sys
-import sseclient, signal
+import sseclient
 
 LOLA_LOGS_HOST = "http://localhost:8081"
 LOLA_LOGS_ENDPOINT = "logs"

@@ -1,0 +1,79 @@
+version: '1.0'
+services:
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    hostname: kafka
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+    volumes:
+      - ./kafka_dir:/bitnami/kafka
+    ports:
+      - 9092:9092
+    networks:
+      logagg_net:
+        ipv4_address: 172.30.0.11
+
+  syslog:
+    image: ghcr.io/axoflow/axosyslog:4.4.0
+    container_name: syslog
+    volumes:
+      - ./vol/syslog:/var/log
+      - ./syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf
+    ports:
+      - 514:514/udp
+      - 601:601 
+      - 6514:6514
+    networks:
+      logagg_net:
+        ipv4_address: 172.30.0.10
+    depends_on:
+      - kafka
+
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.4-arm64
+    container_name: elastic
+    environment:
+      - node.name=elastic01
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./vol/elastic:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      logagg_net:
+        ipv4_address: 172.30.0.9
+    depends_on:
+      - kafka
+
+  lola:
+    image: devj2019/lola
+    container_name: lola
+    environment:
+      - KAFKA_BOOTSTRAP_SERVER=172.30.0.11:9092 
+      - ES_HOST=172.30.0.9 
+      - ES_PORT=9200
+    ports:
+      - 8081:8081
+    networks:
+      - logagg_net
+    depends_on:
+      - kafka
+      - elastic
+
+networks:
+  logagg_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16

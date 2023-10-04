@@ -1,4 +1,4 @@
-spring.kafka.bootstrap-servers: 172.30.0.11:9092
+spring.kafka.bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER}
 server:
   port: 8081
 kafka:
@@ -7,6 +7,5 @@ kafka:
     topic: syslog
 
 elasticsearch:
-  host: 172.30.0.2
-#  host: localhost
-  port: 9200
+  host: ${ES_HOST}
+  port: ${ES_PORT}
