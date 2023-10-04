@@ -3,6 +3,8 @@ OVERVIEW
 This is a log aggregation system using syslog-ng, Kafka, and ElasticSearch.
 It aggregates logs from containers, which can be viewed in real-time or after the fact, using a command line tool called logvis-tail.
 
+You will need JDK 17 installed to build LOLA and HelloSB.
+
 STARTING UP
 
 $chmod +x ./deps/init.sh
@@ -30,7 +32,8 @@ RUNNING A CONTAINER THAT SENDS LOGS
 
 To build the sample app hellosb:
 
-$sudo docker build ./hello -t devj2019/hellosb
+$../hello/gradlew assemble
+$sudo docker build ../hello -t devj2019/hellosb
 
 Running hellosb with logs forwarded to syslog:
 
@@ -47,6 +50,6 @@ $chmod +x ./deps/teardown.sh
 $./deps/teardown.sh
 
 This will remove the containers setup in STARTING UP phase.
-Thats kafka, syslog, elasticsearch and lola.
+That's kafka, syslog, elasticsearch and lola.
 
 You will need to manually stop any devj2019/hellosb containers you spin up.
