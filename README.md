@@ -5,7 +5,7 @@
 This is a log aggregation system using syslog-ng, Kafka, and ElasticSearch.
 It aggregates logs from containers, which can be viewed in real-time or after the fact, using a command line tool called logvis-tail.
 
-You will need JDK 17 installed to build LOLA and HelloSB.
+You will need JDK 17 installed to build LOLA and HelloSB, and Python3 to run logvis-tail.py
 
 ## STARTING UP
 
@@ -25,6 +25,9 @@ To serve logvis-tail, LOLA reads from ElasticSearch or forwards live logs from t
 
 It supports these commands:
  `$cd logvis-tail/client`
+
+ `pip3 install -r requirements.txt`  
+
  - list logs:
    
     `$python3 logvis-tail.py --app list`
