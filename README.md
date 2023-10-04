@@ -9,9 +9,11 @@ You will need JDK 17 installed to build LOLA and HelloSB, and Python3 to run log
 
 ## STARTING UP
 
-`$chmod +x ./deps/init.sh`
+`cd deps`
 
-`$./deps/init.sh`
+`$chmod +x ./init.sh`
+
+`$./init.sh`
 
 This will run a syslog server that will listen for any logs on UDP 514 port,
 a Kafka broker, a single node ElasticSearch cluster, and a custom SpringBoot app called LOLA.
@@ -23,10 +25,11 @@ The other function that LOLA serves is to act a server for tailing logs and view
 The client for it called logvis-tail.
 To serve logvis-tail, LOLA reads from ElasticSearch or forwards live logs from the Kafka feed via *server-side events*.
 
-It supports these commands:
- `$cd logvis-tail/client`
+`$cd logvis-tail/client`
 
  `pip3 install -r requirements.txt`  
+
+It supports these commands:
 
  - list logs:
    
