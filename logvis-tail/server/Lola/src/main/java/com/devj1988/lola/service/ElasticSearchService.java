@@ -1,6 +1,9 @@
 package com.devj1988.lola.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.FieldSort;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
@@ -14,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public class ElasticSearchService {
     public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     public static final String INDEX_PREFIX = "logs-";
+    private static final int MAX_RESULTSET_SIZE = 3000;
 
     private final ElasticsearchClient elasticsearchClient;
 
@@ -52,7 +53,10 @@ public class ElasticSearchService {
                                 r -> r.from(fromDateTime)
                                         .to(toDateTime)
                                         .field("timestamp")
-                )))).build();
+                ))))
+                .size(MAX_RESULTSET_SIZE)
+                .sort(s -> s.field(f -> f.field("timestamp").order(SortOrder.Asc)))
+                .build();
         SearchResponse<ObjectNode> response = elasticsearchClient.search(searchRequest, ObjectNode.class);
 
         List<List<String>> logs = response.hits().hits()
@@ -75,7 +79,7 @@ public class ElasticSearchService {
         } catch (IOException e) {
             return Collections.emptySet();
         }
-//        stats.all().primaries();
+
         return stats.indices().keySet().stream()
                 .filter(x -> x.startsWith(INDEX_PREFIX))
                 .map(x -> x.substring(INDEX_PREFIX.length()))
@@ -88,14 +92,5 @@ public class ElasticSearchService {
 
     private String getIndexForApplication(String application) {
         return INDEX_PREFIX + application;
-    }
-
-    public static void main(String[] args) throws Exception {
-        ESConfig config = new ESConfig();
-        ElasticsearchClient esclient = config.elasticsearchClient("localhost", 9200);
-        ElasticSearchService service = new ElasticSearchService(esclient);
-        service.getLogs("hellosb", "2023-10-03T19:53:33.000+0000",
-                "2023-10-03T19:56:33.000+0000");
-        service.getApplicationList();
     }
 }
