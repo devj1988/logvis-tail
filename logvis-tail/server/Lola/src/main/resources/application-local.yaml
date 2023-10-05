@@ -1,0 +1,11 @@
+spring.kafka.bootstrap-servers: 127.0.0.1:9092
+server:
+  port: 8081
+kafka:
+  consumer:
+    groupId: lola
+    topic: syslog
+
+elasticsearch:
+  host: localhost
+  port: 9200
