@@ -27,7 +27,7 @@ The Kafka topic will be consumed by a listener configured in LOLA, which will pa
 
 The other function that LOLA serves is to act a server for tailing logs and viewing historical log data.
 The client for it called logvis-tail.
-To serve logvis-tail, LOLA reads from ElasticSearch or forwards live logs from the Kafka feed via *server-side events*.
+To serve logvis-tail, LOLA reads from ElasticSearch or forwards live logs from the Kafka feed via *server-sent events*.
 
 `$cd logvis-tail/client`
 
